@@ -127,4 +127,6 @@ router.delete('/delete-member/:id', verifyJWT, async (req, res) => {
   }
 });
 
+
+
 export default router;
