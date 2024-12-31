@@ -1,6 +1,6 @@
 import express from 'express';
 import { Member } from '../models/db.js';
-import { Authorize, authorizeDepartment } from '../middlewares/AuthoriseRoles.js';
+import { verifyJWT } from '../middlewares/verifyJWT.js';
 
 const router = express.Router();
 
@@ -33,8 +33,9 @@ router.post('/signup', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
-// approve/reject the request of members
-router.put('/approve-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req, res) => {
+
+// Approve/Reject the request of members
+router.put('/approve-member/:id', verifyJWT, async (req, res) => {
   const { status } = req.body; // Status should be 'Approved' or 'Rejected'
 
   if (!['Approved', 'Rejected'].includes(status)) {
@@ -43,14 +44,15 @@ router.put('/approve-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req
 
   try {
     const member = await Member.findById(req.params.id);
-
     if (!member) return res.status(404).send('Member not found');
 
     // Restrict Admins to approving/rejecting members in their department
-    if (req.user.role === 'Admin' && member.department.toString() !== req.user.department.toString()) {
-      return res.status(403).send('Access denied');
+    if (req.user.role === 'Member'
+      // && member.department?.toString() !== req.user.department?.toString()
+    ) {
+      return res.status(403).json({ message: 'Access denied'});
     }
-
+    console.log("req.user",req.user)
     member.status = status;
 
     // Assign department to approved members if not already set
@@ -59,8 +61,7 @@ router.put('/approve-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req
     }
 
     await member.save();
-
-    res.send({ message: `Member ${status.toLowerCase()} successfully`, member });
+    res.json({ message: `Member ${status.toLowerCase()} successfully`, member});
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
@@ -68,7 +69,7 @@ router.put('/approve-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req
 });
 
 // Fetch Pending Members
-router.get('/pending-members', Authorize(['SuperAdmin', 'Admin']), async (req, res) => {
+router.get('/pending-members', verifyJWT, async (req, res) => {
   try {
     const query = { status: 'Pending' };
 
@@ -85,44 +86,45 @@ router.get('/pending-members', Authorize(['SuperAdmin', 'Admin']), async (req, r
   }
 });
 
-  
-  router.put('/update-member/:id', authorizeDepartment(['SuperAdmin', 'Admin']), async (req, res) => {
-    const updates = req.body;
-    try {
-      const updatedMember = await Member.findByIdAndUpdate(req.params.id, updates, { new: true });
-      res.send(updatedMember);
-    } catch (error) {
-      res.status(500).send('Server error');
-    }
-  });
+// Update Member
+router.put('/update-member/:id', verifyJWT, async (req, res) => {
+  const updates = req.body;
 
-  router .delete('/delete-member/:id', authorizeDepartment(['SuperAdmin', 'Admin']), async (req, res) => {
-    try {
-      await Member.findByIdAndDelete(req.params.id);
-      res.send({ message: 'Member deleted successfully' });
-    } catch (error) {
-      res.status(500).send('Server error');
+  try {
+    const member = await Member.findById(req.params.id);
+    if (!member) return res.status(404).send('Member not found');
+
+    // Restrict Admins to updating members in their department
+    if (req.user.role === 'Admin' && member.department?.toString() !== req.user.department?.toString()) {
+      return res.status(403).send('Access denied');
     }
-  });
-  
-  router.delete('/delete-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req, res) => {
-    try {
-      const member = await Member.findById(req.params.id);
-  
-      if (!member) return res.status(404).send('Member not found');
-  
-      // Restrict Admins to deleting members in their department
-      if (req.user.role === 'Admin' && member.department.toString() !== req.user.department.toString()) {
-        return res.status(403).send('Access denied');
-      }
-  
-      await member.delete();
-      res.send({ message: 'Member deleted successfully' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send('Server error');
+
+    Object.assign(member, updates);
+    await member.save();
+    res.send(member);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
+
+// Delete Member
+router.delete('/delete-member/:id', verifyJWT, async (req, res) => {
+  try {
+    const member = await Member.findById(req.params.id);
+    if (!member) return res.status(404).send('Member not found');
+
+    // Restrict Admins to deleting members in their department
+    if (req.user.role === 'Admin' && member.department?.toString() !== req.user.department?.toString()) {
+      return res.status(403).send('Access denied');
     }
-  });
-  
+
+    await member.delete();
+    res.send({ message: 'Member deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Server error');
+  }
+});
 
 export default router;

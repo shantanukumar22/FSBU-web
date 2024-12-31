@@ -43,7 +43,8 @@ const memberSchema = new mongoose.Schema(
 
 const departmentSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
-  departmentHead: { type: mongoose.Schema.Types.ObjectId, ref: 'Member', required: true }, // Head of the department
+  members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Member' }],
+  departmentHead: { type: mongoose.Schema.Types.ObjectId, ref: 'Member' },
 });
 
 const attendanceSchema = new mongoose.Schema({
