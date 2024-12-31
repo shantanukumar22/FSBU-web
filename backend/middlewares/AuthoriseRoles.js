@@ -1,4 +1,4 @@
-import { Member } from "../models/db";
+import { Member } from "../models/db.js";
 
  export const Authorize = (roles) => (req, res, next) => {
   const { user } = req; // Attach user from JWT middleware

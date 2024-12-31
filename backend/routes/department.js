@@ -1,10 +1,10 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
 import { Authorize } from '../middlewares/AuthoriseRoles.js';
 import { Department, Member } from '../models/db.js';
 
 // creating just the department
-router.post('/departments', Authorize(['SuperAdmin']), async (req, res) => {
+router.post('/', Authorize(['SuperAdmin']), async (req, res) => {
     const { name } = req.body;
   
     try {
@@ -26,7 +26,7 @@ router.post('/departments', Authorize(['SuperAdmin']), async (req, res) => {
   });
 
   // adding someone as a head of a department/ or creating a new member as head
-  router.post('/departments/:id/head', Authorize(['SuperAdmin']), async (req, res) => {
+  router.post('/:id/head', Authorize(['SuperAdmin']), async (req, res) => {
     const { id } = req.params; // Department ID
     const { memberId, createNewMember } = req.body;
   
@@ -87,4 +87,4 @@ router.post('/departments', Authorize(['SuperAdmin']), async (req, res) => {
     }
   });
   
-  module.exports = router;
+export default router;

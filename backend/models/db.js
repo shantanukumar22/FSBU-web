@@ -1,19 +1,18 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-require("dotenv").config();
+import dotenv from 'dotenv';
+dotenv.config();
 
 const connectDB = async () => {
   try {
-    const connection = await mongoose.connect(process.env.MONGO_URI, {
+    const connection = await mongoose.connect("mongodb+srv://cmsfullstack:aJsTCZ81K3Er6GO6@cms.expj4.mongodb.net/test-fsbu", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true,
-      useFindAndModify: false, 
     });
 
-    console.log(`MongoDB connected: ${connection.connection.host}`.cyan.underline);
+    console.log(`MongoDB connected: ${connection.connection.host}`);
   } catch (error) {
-    console.error(`Error: ${error.message}`.red.bold);
+    console.error(`Error: ${error.message}`);
     process.exit(1); 
   }
 };

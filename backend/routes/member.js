@@ -1,11 +1,12 @@
-const express = require('express');
-const router = express.Router();
+import express from 'express';
 import { Member } from '../models/db.js';
 import { Authorize, authorizeDepartment } from '../middlewares/AuthoriseRoles.js';
 
+const router = express.Router();
+
 // users can request adding them as a member in the club
 router.post('/signup', async (req, res) => {
-  const { name, enrollmentNumber, position, department, email, password, contact } = req.body;
+  const { name, enrollmentNumber, email, password, contact } = req.body;
 
   try {
     // Check if email or enrollment number already exists
@@ -18,8 +19,6 @@ router.post('/signup', async (req, res) => {
     const newMember = new Member({
       name,
       enrollmentNumber,
-      position,
-      department,
       email,
       password,
       contact,
@@ -69,7 +68,7 @@ router.put('/approve-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req
 });
 
 // Fetch Pending Members
-router.get('/pending-members', authorize(['SuperAdmin', 'Admin']), async (req, res) => {
+router.get('/pending-members', Authorize(['SuperAdmin', 'Admin']), async (req, res) => {
   try {
     const query = { status: 'Pending' };
 
@@ -106,7 +105,7 @@ router.get('/pending-members', authorize(['SuperAdmin', 'Admin']), async (req, r
     }
   });
   
-  router.delete('/delete-member/:id', authorize(['SuperAdmin', 'Admin']), async (req, res) => {
+  router.delete('/delete-member/:id', Authorize(['SuperAdmin', 'Admin']), async (req, res) => {
     try {
       const member = await Member.findById(req.params.id);
   
@@ -126,4 +125,4 @@ router.get('/pending-members', authorize(['SuperAdmin', 'Admin']), async (req, r
   });
   
 
-  module.exports = router;
+export default router;
