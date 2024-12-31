@@ -29,7 +29,6 @@ router.post('/login', async (req, res) => {
     if (member.password !== password) {
       return res.status(401).json({message:'Invalid password'});
     }
-    
     // Create a JWT token
     const token = jwt.sign(
       { id: member._id, role: member.role, department: member.department }, // Payload
