@@ -21,7 +21,7 @@ function Home() {
         <Pricing />
         {/* <InfiniteHorizontalScroll /> */}
         <InfiniteMovingCards />
-        <Faq />
+        {/* <Faq /> */}
         <Testimonials />
         {/* <Download /> */}
         <Footer />
