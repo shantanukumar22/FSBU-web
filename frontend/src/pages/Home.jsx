@@ -24,7 +24,7 @@ function Home() {
         {/* <Faq /> */}
         <Testimonials />
         {/* <Download /> */}
-        <TeamSection />
+        {/* <TeamSection /> */}
         <Footer />
       </main>
     </div>

@@ -78,6 +78,7 @@
 
 import { Element, Link as LinkScroll } from "react-scroll";
 import Button from "../components/Button.jsx";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -98,6 +99,9 @@ const Hero = () => {
             <LinkScroll to="Events" offset={-100} spy smooth>
               <Button>Take me to Events</Button>
             </LinkScroll>
+            <Link to={"/team"} className="p-10">
+              <Button>Our smartass team</Button>
+            </Link>
           </div>
         </div>
 
