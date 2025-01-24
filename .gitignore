@@ -1,6 +1,4 @@
 # Ignore environment variable files
-.env
-.env.*
 
 # Ignore Node.js dependencies
 node_modules/
@@ -87,3 +85,4 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+config.bat
