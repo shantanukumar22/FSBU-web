@@ -9,6 +9,7 @@ import "../index.css";
 // import InfiniteHorizontalScroll from "../sections/SocialMedia.jsx";
 // import SocialCardCarousel from "../sections/SocialMedia.jsx";
 import InfiniteMovingCards from "../sections/SocialMedia.jsx";
+import TeamSection from "../components/TeamSection.jsx";
 // import HorizontalScroll from "../sections/SocialMedia.jsx";
 function Home() {
   return (
@@ -23,6 +24,7 @@ function Home() {
         {/* <Faq /> */}
         <Testimonials />
         {/* <Download /> */}
+        <TeamSection />
         <Footer />
       </main>
     </div>
